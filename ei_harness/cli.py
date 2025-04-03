@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 from .ei_harness import EIHarness
 from .utils.prompt_loader import DEFAULT_PROMPT_URL
+from .utils.color import info, warning, error, success, bold, dim
 
 
 def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
@@ -61,6 +62,19 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
         help=f"URL to load the superprompt from. Default: {DEFAULT_PROMPT_URL}",
     )
     
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Disable OpenAI's API-level caching (no 50% discount on input tokens).",
+    )
+    
+    parser.add_argument(
+        "--quiet",
+        "-q",
+        action="store_true",
+        help="Suppress token count and cost information.",
+    )
+    
     return parser.parse_args(args)
 
 
@@ -86,7 +100,7 @@ def main(args: Optional[List[str]] = None) -> int:
         env_var = f"{parsed_args.model_provider.upper()}_API_KEY"
         api_key = os.getenv(env_var)
         if not api_key:
-            print(f"Error: No API key provided. Please provide an API key with --api-key or set the {env_var} environment variable.")
+            print(error(f"Error: No API key provided. Please provide an API key with --api-key or set the {env_var} environment variable."))
             return 1
     
     # Initialize EI harness
@@ -95,16 +109,26 @@ def main(args: Optional[List[str]] = None) -> int:
         api_key=api_key,
         model_name=parsed_args.model,
         prompt_url=parsed_args.prompt_url if parsed_args.prompt_url != DEFAULT_PROMPT_URL else None,
+        enable_cache=not parsed_args.no_cache,
+        verbose=not parsed_args.quiet,
     )
     
     # Load the superprompt
     try:
-        print("Loading superprompt...")
+        if parsed_args.quiet:
+            print("Loading superprompt...")
         harness.load_prompt()
-        print("Superprompt loaded successfully.")
+        if parsed_args.quiet:
+            print(success("Superprompt loaded successfully."))
     except Exception as e:
-        print(f"Error loading superprompt: {e}")
+        print(error(f"Error loading superprompt: {e}"))
         return 1
+    
+    # Show cache status
+    if not parsed_args.quiet and not parsed_args.no_cache:
+        print(info("OpenAI API-level caching is enabled (50% discount on cached input tokens)."))
+    elif not parsed_args.quiet and parsed_args.no_cache:
+        print(warning("OpenAI API-level caching is disabled (no discount on input tokens)."))
     
     # Interactive mode or single prompt
     if parsed_args.prompt:
@@ -112,29 +136,29 @@ def main(args: Optional[List[str]] = None) -> int:
         try:
             print("\nGenerating response...")
             response = harness.generate(parsed_args.prompt)
-            print("\nResponse:")
+            print("\n" + bold("Response:"))
             print(response)
         except Exception as e:
-            print(f"Error generating response: {e}")
+            print(error(f"Error generating response: {e}"))
             return 1
     else:
         # Interactive mode
-        print("\nEntering interactive mode. Type 'exit' or 'quit' to exit.")
+        print("\n" + bold("Entering interactive mode. Type 'exit' or 'quit' to exit."))
         while True:
             try:
-                user_input = input("\nYou: ")
+                user_input = input("\n" + bold("You: "))
                 if user_input.lower() in ["exit", "quit"]:
                     break
                 
                 print("\nGenerating response...")
                 response = harness.generate(user_input)
-                print("\nAssistant:")
+                print("\n" + bold("Assistant:"))
                 print(response)
             except KeyboardInterrupt:
                 print("\nExiting...")
                 break
             except Exception as e:
-                print(f"Error: {e}")
+                print(error(f"Error: {e}"))
     
     return 0
 
