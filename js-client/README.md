@@ -70,6 +70,27 @@ main();
 node example.js
 ```
 
+### Using Docker
+
+The JavaScript client includes Docker support for easy deployment:
+
+```bash
+# Build and run the Docker container
+docker build -t ei-harness-js .
+docker run -it --env-file .env ei-harness-js
+
+# Or use docker-compose from the parent directory
+cd ..
+docker-compose up js-client
+```
+
+Make sure to create a `.env` file with your OpenAI API key before running the Docker container:
+
+```bash
+cp .env.example .env
+# Then edit .env with your favorite text editor
+```
+
 ## Configuration
 
 You can configure the client either through the constructor or using environment variables in a `.env` file:

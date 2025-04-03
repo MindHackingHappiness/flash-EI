@@ -68,6 +68,42 @@ pip install -e .
 
 The virtual environment helps isolate the project dependencies from your system Python installation, preventing conflicts between packages.
 
+### Docker Setup
+
+The project includes Docker support for easy deployment and isolation:
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/EI-harness-lite.git
+cd EI-harness-lite
+
+# Create .env files with your API keys
+cp .env.example .env
+cp js-client/.env.example js-client/.env
+# Then edit both .env files with your favorite text editor
+
+# Build and start the containers
+docker-compose up -d
+```
+
+This will:
+1. Build Docker images for both the Streamlit app and JavaScript client
+2. Start the Streamlit app on port 8501 (accessible at http://localhost:8501)
+3. Run the JavaScript client example
+
+You can also run individual components:
+
+```bash
+# Run just the Streamlit app
+docker-compose up -d streamlit-app
+
+# Run just the JavaScript client
+docker-compose up js-client
+
+# View logs
+docker-compose logs -f
+```
+
 ## Usage
 
 ### As a Python Library
