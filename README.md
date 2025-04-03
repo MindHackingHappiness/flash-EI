@@ -1,20 +1,30 @@
 # EI-harness-lite
 
-A lightweight harness for using the MHH EI superprompt with various LLMs, featuring token counting, cost estimation, and API-level caching.
+A lightweight harness for using the MHH EI superprompt with various LLMs, featuring a comprehensive UI, multi-provider support, token counting, cost estimation, and API-level caching.
 
 ## Overview
 
 EI-harness-lite provides a simple way to use the [MHH EI for AI](https://github.com/MindHackingHappiness/MHH-EI-for-AI-Language-Enabled-Emotional-Intelligence-and-Theory-of-Mind-Algorithms) superprompt with different language models. It automatically loads the superprompt from the source repository and combines it with user input to generate responses with enhanced emotional intelligence and Theory of Mind capabilities.
 
+![EI-harness-lite UI](https://github.com/yourusername/EI-harness-lite/raw/main/docs/images/ui-screenshot.png)
+
 ## Features
 
 - **Streamlined Design**: Minimal implementation focused on the core functionality
 - **Multiple Interfaces**: Use as a Python library, command-line tool, or Streamlit web app
-- **Model Flexibility**: Supports all major OpenAI models, including GPT-4 and GPT-3.5-Turbo
+- **Comprehensive UI**: User-friendly interface with model selection, pricing information, and usage metrics
+- **Multi-Provider Support**: Works with:
+  - **Commercial APIs**: OpenAI, Anthropic, Gemini, Groq, Hugging Face
+  - **Local Models**: Ollama, LlamaCPP, vLLM
+- **Superprompt Editor**: Edit the superprompt directly or by sections with real-time token counting
 - **Dynamic Loading**: Loads the superprompt directly from the source repository
 - **Token Counting**: Accurately counts tokens for all supported models
 - **Cost Estimation**: Provides transparent cost estimates for API calls
-- **API-Level Caching**: Leverages OpenAI's caching for 50% discount on input tokens
+- **Enhanced Caching**: Leverages provider-specific caching with detailed statistics:
+  - OpenAI: 50% discount on input tokens
+  - Anthropic: 50% discount on input tokens
+  - Gemini: 75% discount on input tokens
+  - Groq: 50% discount on input tokens (estimated)
 - **Context Window Awareness**: Warns when approaching model token limits
 - **Colorful Output**: Uses colorama for clear, visual feedback in the terminal
 
@@ -115,11 +125,38 @@ ei-harness-lite --quiet --api-key YOUR_API_KEY
 streamlit run app.py
 ```
 
-The Streamlit app provides a user-friendly interface with:
-- Model selection with pricing information
-- Token counting and cost estimation
+The Streamlit app provides a comprehensive user interface with:
+
+#### Model Selection and Configuration
+- Support for multiple providers (OpenAI, Anthropic, Gemini, Groq, Hugging Face, Ollama, LlamaCPP, vLLM)
+- Dynamic model selection based on the chosen provider
+- Provider-specific configuration options (endpoints, temperature settings for local models)
+- Detailed model information (pricing, context window size)
+- Links to provider documentation
+
+#### Superprompt Editor
+- Full-text editor for direct editing of the entire superprompt
+- Section-based editor with collapsible sections:
+  - Copyright and License
+  - Title and Author
+  - Foreword
+  - Instructions to the LLM (main content)
+- Custom message appending with a single click
+- Real-time token counting for all edits
+- Context window warnings when approaching model limits
+
+#### Enhanced Caching UI
+- Visual indicators for cache availability by provider
+- Detailed caching information with discount percentages
+- Cache hit statistics showing cost savings
+- Cache control options (enable/disable, clear cache)
+- Transparent display of cached vs. non-cached requests
+
+#### Usage Metrics
+- Detailed token usage tracking (input, output, total)
+- Cost estimation for each request
+- Cumulative usage statistics
 - Cache status indicators
-- Usage metrics tracking
 
 ### Running Tests
 
@@ -158,10 +195,27 @@ You can disable caching with the `--no-cache` flag in the CLI or by setting `ena
 
 ## Environment Variables
 
-You can set the following environment variables in a `.env` file:
+You can set the following environment variables in a `.env` file to avoid entering API keys in the UI:
 
 ```
+# API Keys for Commercial Providers
 OPENAI_API_KEY=your-openai-api-key
+ANTHROPIC_API_KEY=your-anthropic-api-key
+GEMINI_API_KEY=your-gemini-api-key
+GROQ_API_KEY=your-groq-api-key
+HUGGINGFACE_API_KEY=your-huggingface-api-key
+
+# Endpoints for Local Models (optional)
+OLLAMA_ENDPOINT=http://localhost:11434
+LLAMACPP_ENDPOINT=http://localhost:8080
+VLLM_ENDPOINT=http://localhost:8000
+```
+
+A sample `.env.example` file is included in the repository. Copy it to `.env` and add your API keys:
+
+```bash
+cp .env.example .env
+# Then edit .env with your favorite text editor
 ```
 
 ## License

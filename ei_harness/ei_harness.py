@@ -7,9 +7,12 @@ import os
 
 from .models.base import BaseModel
 from .models.openai import OpenAIModel
+from .models.anthropic import AnthropicModel
+from .models.gemini import GeminiModel
 from .utils.prompt_loader import load_prompt_from_url, DEFAULT_PROMPT_URL
 from .utils.token_counter import count_tokens, count_message_tokens, check_context_window
 from .utils.color import info, warning, error, success, format_tokens
+from .utils.model_info import PROVIDER_DOCS, MODEL_PRICING, MODEL_CONTEXT_WINDOW, PROVIDER_CACHING, PROVIDER_MODELS
 
 
 class EIHarness:
@@ -23,6 +26,7 @@ class EIHarness:
         api_key: Optional[str] = None,
         model_name: str = "gpt-4",
         prompt_url: Optional[str] = None,
+        custom_prompt_text: Optional[str] = None,
         enable_cache: bool = True,
         verbose: bool = True,
     ):
@@ -39,30 +43,44 @@ class EIHarness:
             verbose: Whether to print token counts and cost estimates.
         """
         self.prompt_url = prompt_url or DEFAULT_PROMPT_URL
+        self.custom_prompt_text = custom_prompt_text
         self.superprompt = None
         self.superprompt_tokens = 0
         self.enable_cache = enable_cache
         self.verbose = verbose
         self.model_name = model_name
+        self.model_provider = model_provider.lower() if isinstance(model_provider, str) else "custom"
         
         # Handle string model provider
         if isinstance(model_provider, str):
-            if model_provider.lower() == "openai":
-                self.model = OpenAIModel(api_key, model_name)
+            model_provider = model_provider.lower()
+            if model_provider == "openai":
+                self.model = OpenAIModel(model=model_name, api_key=api_key, enable_cache=enable_cache)
+            elif model_provider == "anthropic":
+                self.model = AnthropicModel(model=model_name, api_key=api_key, enable_cache=enable_cache)
+            elif model_provider == "gemini":
+                self.model = GeminiModel(model=model_name, api_key=api_key, enable_cache=enable_cache)
             else:
-                raise ValueError(f"Unsupported model provider: {model_provider}")
+                raise ValueError(f"Unsupported model provider: {model_provider}. "
+                                 f"Supported providers are: openai, anthropic, gemini")
         else:
             # Use the provided model class
-            self.model = model_provider(api_key, model_name)
+            self.model = model_provider(model=model_name, api_key=api_key, enable_cache=enable_cache)
     
     def load_prompt(self) -> str:
         """
-        Load the superprompt from the URL.
+        Load the superprompt from the URL or use custom text if provided.
         
         Returns:
             The superprompt text.
         """
-        self.superprompt = load_prompt_from_url(self.prompt_url)
+        # Use custom prompt text if provided, otherwise load from URL
+        if self.custom_prompt_text:
+            self.superprompt = self.custom_prompt_text
+            source = "custom text"
+        else:
+            self.superprompt = load_prompt_from_url(self.prompt_url)
+            source = f"URL: {self.prompt_url}"
         
         # Count tokens in the superprompt
         if hasattr(self.model, 'model'):
@@ -73,7 +91,7 @@ class EIHarness:
         self.superprompt_tokens = count_tokens(self.superprompt, model_name)
         
         if self.verbose:
-            print(info(f"Loaded superprompt from {self.prompt_url}"))
+            print(info(f"Loaded superprompt from {source}"))
             print(info(f"Superprompt size: {format_tokens(self.superprompt_tokens)} tokens"))
             
             # Check context window
@@ -127,4 +145,5 @@ class EIHarness:
         usage_info = self.model.get_usage_info()
         usage_info["superprompt_tokens"] = self.superprompt_tokens
         usage_info["superprompt_url"] = self.prompt_url
+        usage_info["model_provider"] = self.model_provider
         return usage_info
