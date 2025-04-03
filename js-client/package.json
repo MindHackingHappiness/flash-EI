@@ -1,0 +1,26 @@
+{
+  "name": "ei-harness-js",
+  "version": "0.1.0",
+  "description": "JavaScript client for OpenAI with EI superprompt",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "openai",
+    "ei",
+    "emotional-intelligence",
+    "superprompt",
+    "gpt"
+  ],
+  "author": "",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "openai": "^4.28.0",
+    "tiktoken": "^1.0.13"
+  }
+}

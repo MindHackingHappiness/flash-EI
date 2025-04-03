@@ -182,6 +182,34 @@ The test suite includes:
 
 All pytest tests are designed to run without making actual API calls, so you don't need an API key to run the tests.
 
+### JavaScript Client
+
+The project also includes a lightweight JavaScript client specifically for OpenAI integration:
+
+```bash
+# Navigate to the js-client directory
+cd js-client
+
+# Install dependencies
+npm install
+
+# Create a .env file with your OpenAI API key
+cp .env.example .env
+# Then edit .env with your favorite text editor
+
+# Run the example
+node example.js
+```
+
+The JavaScript client provides:
+- Simple Promise-based API
+- Automatic superprompt loading
+- Token counting and cost estimation
+- OpenAI API-level caching support
+- Detailed usage tracking
+
+For more details, see the [JavaScript Client README](js-client/README.md).
+
 ## OpenAI API-Level Caching
 
 This project leverages OpenAI's API-level caching feature, which provides a 50% discount on input tokens when the same prompt is used within an hour. This is particularly valuable for the superprompt, which can be quite large.
