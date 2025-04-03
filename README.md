@@ -6,7 +6,7 @@ A lightweight harness for using the MHH EI superprompt with various LLMs, featur
 
 EI-harness-lite provides a simple way to use the [MHH EI for AI](https://github.com/MindHackingHappiness/MHH-EI-for-AI-Language-Enabled-Emotional-Intelligence-and-Theory-of-Mind-Algorithms) superprompt with different language models. It automatically loads the superprompt from the source repository and combines it with user input to generate responses with enhanced emotional intelligence and Theory of Mind capabilities.
 
-![EI-harness-lite UI](docs/images/ui-screenshot.png)
+![EI-harness-lite UI](docs/images/st_screenshot 2025-04-03 162331.png)
 
 ## Features
 
