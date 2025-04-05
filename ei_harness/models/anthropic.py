@@ -36,7 +36,9 @@ class AnthropicModel(BaseModel):
             enable_cache: Whether to enable caching for identical requests.
             **kwargs: Additional arguments to pass to the Anthropic API.
         """
-        super().__init__(model=model, api_key=api_key, **kwargs)
+        super().__init__(api_key=api_key)
+        self.model = model
+        self.kwargs = kwargs
         self.enable_cache = enable_cache
         self.cache = {}
         

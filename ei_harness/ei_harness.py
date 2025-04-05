@@ -55,7 +55,7 @@ class EIHarness:
         if isinstance(model_provider, str):
             model_provider = model_provider.lower()
             if model_provider == "openai":
-                self.model = OpenAIModel(model=model_name, api_key=api_key, enable_cache=enable_cache)
+                self.model = OpenAIModel(api_key=api_key, model=model_name)
             elif model_provider == "anthropic":
                 self.model = AnthropicModel(model=model_name, api_key=api_key, enable_cache=enable_cache)
             elif model_provider == "gemini":
