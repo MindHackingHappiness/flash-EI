@@ -5,23 +5,8 @@ Token counting and cost estimation utilities.
 import tiktoken
 from typing import Dict, List, Optional, Union, Any
 
-# Current pricing (update from official source)
-MODEL_PRICING = {
-    "gpt-4-turbo": {"input": 0.01/1e3, "output": 0.03/1e3},
-    "gpt-4": {"input": 0.03/1e3, "output": 0.06/1e3},
-    "gpt-4-32k": {"input": 0.06/1e3, "output": 0.12/1e3},
-    "gpt-3.5-turbo": {"input": 0.0015/1e3, "output": 0.002/1e3},
-    "gpt-3.5-turbo-16k": {"input": 0.003/1e3, "output": 0.004/1e3},
-}
-
-# Model context window limits
-MODEL_CONTEXT_WINDOW = {
-    "gpt-4-turbo": 128000,
-    "gpt-4": 8192,
-    "gpt-4-32k": 32768,
-    "gpt-3.5-turbo": 4096,
-    "gpt-3.5-turbo-16k": 16384,
-}
+# Import model information from model_info.py
+from .model_info import MODEL_PRICING, MODEL_CONTEXT_WINDOW
 
 
 def count_tokens(text: str, model: str) -> int:
@@ -85,7 +70,7 @@ def estimate_cost(model: str, input_tokens: int, output_tokens: int, cached: boo
         model: The model name.
         input_tokens: The number of input tokens.
         output_tokens: The number of output tokens.
-        cached: Whether the input is cached (50% discount on input tokens).
+        cached: Whether the input is cached (100% discount on input tokens for Gemini models, 50% for others).
         
     Returns:
         A dictionary with cost breakdown.
@@ -93,8 +78,15 @@ def estimate_cost(model: str, input_tokens: int, output_tokens: int, cached: boo
     if model not in MODEL_PRICING:
         raise ValueError(f"Unknown model: {model}")
     
-    # Apply 50% discount to input tokens if cached
-    input_cost_multiplier = 0.5 if cached else 1.0
+    # Apply appropriate discount to input tokens if cached
+    # Gemini models get 100% discount (free), others get 50%
+    if cached:
+        if model.startswith("gemini"):
+            input_cost_multiplier = 0.0  # 100% discount (free)
+        else:
+            input_cost_multiplier = 0.5  # 50% discount
+    else:
+        input_cost_multiplier = 1.0
     
     input_cost = MODEL_PRICING[model]["input"] * input_tokens * input_cost_multiplier
     output_cost = MODEL_PRICING[model]["output"] * output_tokens
@@ -118,7 +110,13 @@ def format_cost(cost: Dict[str, float]) -> str:
     Returns:
         A formatted string with cost information.
     """
-    cached_str = " (50% cached discount applied)" if cost["cached"] else ""
+    if cost["cached"]:
+        if cost["input_cost"] == 0:
+            cached_str = " (100% cached discount applied)"
+        else:
+            cached_str = " (50% cached discount applied)"
+    else:
+        cached_str = ""
     return (
         f"Cost: ${cost['total_cost']:.6f} total "
         f"(${cost['input_cost']:.6f} input{cached_str} + "
@@ -138,7 +136,14 @@ def check_context_window(model: str, token_count: int) -> Dict[str, Any]:
         A dictionary with context window information.
     """
     if model not in MODEL_CONTEXT_WINDOW:
-        return {"valid": True, "message": "Unknown model, cannot validate context window."}
+        return {
+            "valid": True, 
+            "message": "Unknown model, cannot validate context window.",
+            "level": "info",  # Always include level key
+            "percentage": 0,
+            "tokens": token_count,
+            "max_tokens": 0
+        }
     
     max_tokens = MODEL_CONTEXT_WINDOW[model]
     valid = token_count <= max_tokens

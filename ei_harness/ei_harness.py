@@ -104,31 +104,40 @@ class EIHarness:
                 print(info(context_check["message"]))
         
         return self.superprompt
-    
-    def generate(self, user_input: str, **kwargs) -> str:
+
+    # Update signature to accept 'prompt' which can be str or list
+    def generate(self, prompt: Union[str, List[Dict[str, str]]], **kwargs) -> str:
         """
-        Generate a response using the superprompt and user input.
-        
+        Generate a response using the provided prompt/history.
+
         Args:
-            user_input: The user's input to append to the superprompt.
-            **kwargs: Additional arguments to pass to the model.
-            
+            prompt: The prompt string or list of message history.
+            **kwargs: Additional arguments to pass to the model, including 'system_instruction'.
+
         Returns:
             The generated response.
         """
-        if not self.superprompt:
+        # The prompt loading logic might need adjustment depending on how
+        # the superprompt is integrated into multi-turn conversations.
+        # For now, assume the caller handles combining the superprompt if needed,
+        # or that the model class handles it internally based on the format.
+
+        # Load superprompt if not already loaded
+        if self.superprompt is None:
             self.load_prompt()
-        
-        # Combine superprompt with user input
-        full_prompt = f"{self.superprompt}\n\nUser: {user_input}"
-        
+
         # Pass enable_cache parameter
         if "enable_cache" not in kwargs:
             kwargs["enable_cache"] = self.enable_cache
-        
+
         # Send to model and get response
-        response = self.model.generate(full_prompt, **kwargs)
-        
+        # Pass superprompt as system_instruction, prompt as contents
+        response = self.model.generate(
+            prompt=prompt, # Pass the original prompt/history
+            system_instruction=self.superprompt, # Pass superprompt separately
+            **kwargs
+        )
+
         # Print usage information if verbose
         if self.verbose:
             print("\n" + self.model.format_usage_info())

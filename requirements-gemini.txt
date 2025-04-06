@@ -1,0 +1,7 @@
+streamlit>=1.30.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+plotly>=5.18.0
+python-dotenv>=1.0.0
+google-genai>=1.0.0 # Use the new SDK
+protobuf>=4.25.0

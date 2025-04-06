@@ -33,6 +33,7 @@ MODEL_PRICING = {
     
     # Gemini models (from https://ai.google.dev/gemini-api/docs/pricing)
     "gemini-2.0-flash": {"input": 0.00010/1e3, "output": 0.00040/1e3},
+    "gemini-2.0-flash-001": {"input": 0.00010/1e3, "output": 0.00040/1e3},  # Specific version of gemini-2.0-flash
     "gemini-2.0-flash-lite": {"input": 0.000075/1e3, "output": 0.00030/1e3},
     "gemini-1.5-flash": {"input": 0.000075/1e3, "output": 0.00030/1e3},
     "gemini-1.5-flash-8b": {"input": 0.0000375/1e3, "output": 0.00015/1e3},
@@ -77,6 +78,7 @@ MODEL_CONTEXT_WINDOW = {
     
     # Gemini models
     "gemini-2.0-flash": 1000000,
+    "gemini-2.0-flash-001": 1000000,  # Specific version of gemini-2.0-flash
     "gemini-2.0-flash-lite": 1000000,
     "gemini-1.5-flash": 1000000,
     "gemini-1.5-flash-8b": 1000000,
@@ -150,7 +152,7 @@ PROVIDER_CACHING = {
 PROVIDER_MODELS = {
     "openai": ["gpt-4-turbo", "gpt-4", "gpt-4-32k", "gpt-3.5-turbo", "gpt-3.5-turbo-16k"],
     "anthropic": ["claude-3.7-sonnet", "claude-3.5-sonnet", "claude-3.5-haiku", "claude-3-opus", "claude-3-sonnet", "claude-3-haiku"],
-    "gemini": ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-pro"],
+    "gemini": ["gemini-2.0-flash", "gemini-2.0-flash-001", "gemini-2.0-flash-lite", "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-pro"],
     "groq": ["llama3-8b-8192", "llama3-70b-8192", "mixtral-8x7b-32768", "gemma-7b-it"],
     "huggingface": ["huggingface:mistralai/Mistral-7B-Instruct-v0.2", "huggingface:meta-llama/Llama-2-70b-chat-hf"],
     "ollama": ["ollama:llama3", "ollama:mistral", "ollama:gemma"],

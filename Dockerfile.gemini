@@ -1,0 +1,27 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Copy requirements files
+COPY requirements.txt .
+COPY requirements-gemini.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-gemini.txt
+
+# Copy the rest of the application
+COPY . .
+
+# Create logs directory
+RUN mkdir -p logs
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
+
+# Expose port
+EXPOSE 8080
+
+# Command to run the application
+CMD streamlit run gemini_app.py --server.port=$PORT --server.address=0.0.0.0 --server.enableCORS=false --server.enableXsrfProtection=false
