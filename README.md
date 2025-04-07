@@ -154,7 +154,10 @@ ei-harness-lite --quiet --api-key YOUR_API_KEY
 
 
 ![MultiModality](docs/images/Art1.png)
-![MultiModality1](docs/images/ArtEval1.png)
+![MultiModality1](docs/images/artEval1.png)
+![MultiModality1](docs/images/artEval2.png)
+
+![MultiModality1](docs/images/artEval3.png)
 
 
 
