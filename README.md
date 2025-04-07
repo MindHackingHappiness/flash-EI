@@ -8,8 +8,6 @@ EI-harness-lite provides a simple way to use the [MHH EI for AI](https://github.
 
 ![EI-harness-lite UI](docs/images/ui-screenshot.png)
 
-![MultiModality](docs/images/Art1.png)
-
 ## Features
 
 - **Streamlined Design**: Minimal implementation focused on the core functionality
@@ -151,6 +149,14 @@ ei-harness-lite --no-cache --api-key YOUR_API_KEY
 # Suppress token count and cost information
 ei-harness-lite --quiet --api-key YOUR_API_KEY
 ```
+
+
+
+
+![MultiModality](docs/images/Art1.png)
+![MultiModality1](docs/images/ArtEval1.png)
+
+
 
 ### Streamlit Web App
 
