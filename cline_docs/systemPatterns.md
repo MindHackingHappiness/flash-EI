@@ -21,3 +21,7 @@ The system appears to follow a layered approach:
 *   **Language:** Python.
 *   **Testing Framework:** Pytest.
 *   **Modularity:** Separation of concerns between core AI logic (`ei_harness/models`), utilities (`ei_harness/utils`), the application (`gemini_app.py`), and testing/deployment scripts.
+*   **Context Caching (Gemini):** Implemented using the `google-genai` SDK's explicit Context Caching feature.
+    *   `GeminiModel` manages cache creation (`client.caches.create`) for the `system_instruction` (superprompt) with a configurable TTL.
+    *   Subsequent `generate_content` calls reference the created cache via `GenerationConfig(cached_content=...)`, sending only the user prompt/history.
+    *   This aims to optimize costs for the large superprompt by leveraging Google's specialized caching.

@@ -1,30 +1,25 @@
-# Progress: EI-harness-lite (As of 2025-04-06 02:24 PM ET)
+# Progress: EI-harness-lite (As of 2025-04-06 06:26 PM ET)
 
 ## What Works
 
-*   **Core Structure:** The basic project structure with separation for models, utilities, tests, and deployment scripts is in place.
-*   **Gemini API Integration:** Successfully integrated and debugged interaction with the Gemini API using the `google-generativeai` v0.8.4 SDK.
-*   **Superprompt Handling:** Implemented prepending of the superprompt to user input to ensure context is passed correctly.
-*   **Basic Caching:** In-memory caching implemented in `GeminiModel` with statistics tracking (hits, misses, savings).
-*   **Streamlit Application:** Functional Streamlit UI (`gemini_app.py`) with chat interface, metrics display, superprompt editor, and cache savings visibility. UI rendering issues fixed.
-*   **Deployment Pipeline:** A process exists and was successfully used for deploying the Gemini application to GCP using Docker and Cloud Build (`deploy_gemini_to_gcp_cloudbuild.py`).
-*   **Testing Framework:** Pytest is set up for running tests.
+*   **Core Structure:** Basic project structure with models, utilities, tests, deployment scripts.
+*   **Gemini API Integration:** Successfully migrated to and integrated with the **`google-genai` SDK (v1.0+)**. API calls are functional.
+*   **Superprompt Handling & Context Caching:** Implemented **Gemini Context Caching**. `GeminiModel` now creates/manages persistent caches for the superprompt (`system_instruction`) via `client.caches.create`. `generate_content` calls reference this cache, sending only user input/history. This replaces the previous prepending method.
+*   **Cache Management & Stats:** Added methods to `GeminiModel` for clearing context caches. Implemented statistics tracking for context cache hits/misses and estimated savings.
+*   **Streamlit Application:** Functional UI (`gemini_app.py`) with chat, metrics, superprompt editor. Includes controls for enabling/disabling/clearing context cache and displays cache stats. UI rendering issues fixed. Export functionality fixed. "Cache Test" tab added.
+*   **Deployment Pipeline:** GCP Cloud Build pipeline (`deploy_gemini_to_gcp_cloudbuild.py`) successfully deployed the application.
+*   **Testing Framework:** Pytest setup exists.
 
-## What's Left to Build / Current Focus (Planning Phase)
+## What's Left to Build / Current Focus
 
-1.  **Local Logging Interface:** Design and implement a local logging system for admin/user review, replacing the previous Supabase approach.
-2.  **Caching & Metrics Enhancement:**
-    *   Review the effectiveness of the current prepending + in-memory caching strategy.
-    *   Investigate if further optimization of Gemini API caching is possible/needed for the current SDK.
-    *   Enhance metrics collection (e.g., latency breakdown) and display for better scalability insights.
-3.  **Scaling & Testing Strategy:**
-    *   Define scaling strategies for the GCP Cloud Run deployment (auto-scaling, instance types, etc.).
-    *   Identify potential performance bottlenecks (API limits, Cloud Run limits).
-    *   Plan for load testing (e.g., using Locust) and potentially synthetic data generation.
-4.  **Authentication (Lower Priority):** Plan the implementation of user authentication.
-5.  **`js-client` Clarification:** Understand the purpose and status of the `js-client/` directory.
-6.  **Image Generation/Analysis Integration (Deferred):** Multi-modal features are currently deferred based on new priorities.
-7.  **Documentation:** Update `GemiGrok/OverviewgFlash2.md` (or create if not done) to reflect the current state and plans.
+1.  **Test Context Caching:** Verify the new implementation functions correctly via the "Cache Test" tab and logs. Confirm cache hits/misses and savings reporting.
+2.  **Styling Improvements:** Address UI styling issues (colors, layout) in `gemini_app.py`. Consider adding theme options.
+3.  **Local Logging Interface:** Implement robust local file logging for requests, responses, errors, and cache events. Ensure logs are being written correctly.
+4.  **Scaling & Testing Strategy:** Define GCP scaling strategies, identify bottlenecks, plan load testing (Locust).
+5.  **Authentication (Lower Priority):** Plan user authentication implementation.
+6.  **`js-client` Clarification:** Understand the purpose and status of the `js-client/` directory.
+7.  **Image Generation/Analysis Integration (Deferred):** Multi-modal features deferred.
+8.  **Documentation:** Update `GemiGrok/OverviewgFlash2.md`.
 
 ## Future Enhancements
 
@@ -34,6 +29,6 @@
 
 ## Overall Status
 
-*   **MAJOR CHECKPOINT REACHED:** The core Gemini text generation application is functional, debugged, includes basic caching with metrics, and is successfully deployed to GCP.
-*   The current phase focuses on planning improvements for logging, caching robustness, metrics, scalability, and testing based on user feedback.
+*   **MAJOR CHECKPOINT REACHED:** Core app migrated to the new `google-genai` SDK, Context Caching implemented, UI issues fixed, deployed to GCP.
+*   Current phase focuses on **testing the new Context Caching implementation**, followed by styling improvements and logging setup.
 *   Memory Bank is up-to-date.

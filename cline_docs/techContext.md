@@ -3,18 +3,23 @@
 ## Core Technologies
 
 *   **Programming Language:** Python (primary, used for backend logic, AI interaction, Streamlit app, testing, scripting)
-*   **AI Model API:** Google Gemini API (specifically targeting Flash 2.0)
-    *   Likely using the `google-generativeai` Python library (based on typical Gemini integration patterns, needs confirmation by checking `requirements*.txt`).
+*   **AI Model API:** Google Gemini API (specifically targeting Flash 1.5 / 2.0)
+    *   Using the **`google-genai`** Python SDK (v1.0+). Migrated from older `google-generativeai`.
+    *   Local SDK source code and documentation available in `./gSDK/`.
 *   **Web Application Framework:** Streamlit (`gemini_app.py`)
-*   **Containerization:** Docker (`Dockerfile`, `Dockerfile.gemini`, `docker-compose.yml`)
+*   **Containerization:** Docker (`Dockerfile.gemini`, `docker-compose.yml`)
 
-## Supporting Libraries & Frameworks (Inferred/Potential)
+## Supporting Libraries & Frameworks (Confirmed for Gemini App)
 
-*   **Python:**
-    *   `requests` or `httpx` (for direct API calls if not using the official SDK)
+*   **Python (`requirements-gemini.txt`):**
+    *   `streamlit>=1.30.0`
+    *   `pandas>=2.0.0`
+    *   `matplotlib>=3.7.0`
+    *   `plotly>=5.18.0`
+    *   `python-dotenv>=1.0.0`
+    *   `google-genai>=1.0.0` (New SDK)
+    *   `protobuf>=4.25.0`
     *   `pytest` (for testing, confirmed by `pytest.ini` and `tests/` structure)
-    *   `python-dotenv` (for loading `.env` files, common practice)
-    *   Libraries listed in `requirements.txt`, `requirements-gemini.txt`, `requirements.1.txt`, `requirements.2.txt` (Need to inspect these files).
 *   **JavaScript (in `js-client/`):**
     *   Node.js runtime environment (implied by `package.json`, `index.js`)
     *   Likely uses a Gemini client library for JavaScript if interacting directly from JS. Dependencies listed in `js-client/package.json`. (The purpose of `js-client` needs clarification - is it actively used or separate?)
@@ -31,7 +36,8 @@
 
 ## Technical Constraints & Considerations
 
-*   **Superprompt Size:** The 170Kb "EI_for_AI" superprompt (`prompt.md`) requires careful handling regarding token limits and potentially caching strategies.
-*   **API Keys:** Secure management of Google Gemini API keys is necessary (likely via environment variables).
-*   **Multi-modality:** Integrating image generation (and later, analysis) requires handling image data alongside text within the application flow and potentially the API calls.
-*   **Dependencies:** Managing dependencies across different `requirements*.txt` files needs attention.
+*   **Superprompt Size:** The ~125K token "EI_for_AI" superprompt (`prompt.md`) requires careful handling regarding token limits. Context Caching is implemented to mitigate costs.
+*   **API Keys:** Secure management of Google Gemini API keys is necessary (via environment variables, loaded by `python-dotenv`). Key is stored in GCP Secret Manager for deployment.
+*   **Context Caching:** Requires specific model versions (e.g., `gemini-1.5-flash-001`). Implemented using `google-genai` SDK's caching features.
+*   **Multi-modality:** Integrating image generation/analysis is deferred.
+*   **Dependencies:** Primarily managed via `requirements-gemini.txt` for the Streamlit app. Other `requirements*.txt` files might be for different components or outdated.
