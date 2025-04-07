@@ -106,21 +106,18 @@ class EIHarness:
         return self.superprompt
 
     # Update signature to accept 'prompt' which can be str or list
-    def generate(self, prompt: Union[str, List[Dict[str, str]]], **kwargs) -> str:
+    def generate(self, prompt: Union[str, List[Dict[str, str]]], image_data: Optional[bytes] = None, **kwargs) -> str:
         """
-        Generate a response using the provided prompt/history.
+        Generate a response using the provided prompt/history and optional image data.
 
         Args:
             prompt: The prompt string or list of message history.
+            image_data: Optional image data as bytes.
             **kwargs: Additional arguments to pass to the model, including 'system_instruction'.
 
         Returns:
             The generated response.
         """
-        # The prompt loading logic might need adjustment depending on how
-        # the superprompt is integrated into multi-turn conversations.
-        # For now, assume the caller handles combining the superprompt if needed,
-        # or that the model class handles it internally based on the format.
 
         # Load superprompt if not already loaded
         if self.superprompt is None:
@@ -133,21 +130,22 @@ class EIHarness:
         # Send to model and get response
         # Pass superprompt as system_instruction, prompt as contents
         response = self.model.generate(
-            prompt=prompt, # Pass the original prompt/history
-            system_instruction=self.superprompt, # Pass superprompt separately
+            prompt=prompt,  # Pass the original prompt/history
+            system_instruction=self.superprompt,  # Pass superprompt separately
+            image_data=image_data,
             **kwargs
         )
 
         # Print usage information if verbose
         if self.verbose:
             print("\n" + self.model.format_usage_info())
-        
+
         return response
-    
+
     def get_usage_info(self) -> Dict[str, Any]:
         """
         Get information about the last API call.
-        
+
         Returns:
             A dictionary with usage information.
         """
